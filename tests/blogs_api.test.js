@@ -115,6 +115,26 @@ test("a blog post cannot be added without a url field specified", async () => {
   await api.post("/api/blogs").send(newPost).expect(400);
 });
 
+test("a blog post can be deleted", async () => {
+  // add first, so that we get a known id
+  // yeah yeah, could be cleaner and more isolated as a test...
+  // again, works for the scope of this course exercise.
+  const newPost = {
+    title: "Test Post",
+    author: "Jest Test",
+    url: "https://example.com/",
+    likes: 0,
+  };
+  const blog = await api.post("/api/blogs").send(newPost);
+  const id = blog.body.id;
+  expect(id).toBeDefined();
+  const blogs = await api.get("/api/blogs");
+  expect(blogs.body).toHaveLength(manyBlogs.length + 1);
+
+  const response = await api.delete(`/api/blogs/${id}`);
+  expect(response.status).toBe(204);
+});
+
 afterAll(() => {
   mongoose.connection.close();
 });

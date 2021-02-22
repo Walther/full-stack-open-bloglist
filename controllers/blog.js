@@ -22,4 +22,13 @@ blogRouter.post("/", async (request, response, next) => {
   }
 });
 
+blogRouter.delete("/:id", async (request, response, next) => {
+  try {
+    const blogs = await Blog.findByIdAndRemove(request.params.id);
+    response.status(204).end();
+  } catch (error) {
+    next(error);
+  }
+});
+
 module.exports = blogRouter;
