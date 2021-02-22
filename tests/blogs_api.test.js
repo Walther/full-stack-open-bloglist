@@ -75,6 +75,19 @@ test("all blogs have an id field", async () => {
   }
 });
 
+test("a blog post can be added", async () => {
+  const newPost = {
+    title: "Test Post",
+    author: "Jest Test",
+    url: "https://example.com/",
+    likes: 0,
+  };
+  let blogObject = new Blog(blog);
+  await blogObject.save();
+  const response = await api.get("/api/blogs");
+  expect(response.body).toHaveLength(manyBlogs.length + 1);
+});
+
 afterAll(() => {
   mongoose.connection.close();
 });
