@@ -83,7 +83,7 @@ test("a blog post can be added", async () => {
     url: "https://example.com/",
     likes: 0,
   };
-  const blog = await api.post("/api/blogs");
+  const blog = await api.post("/api/blogs").send(newPost);
   expect(blog.body.id).toBeDefined();
   const blogs = await api.get("/api/blogs");
   expect(blogs.body).toHaveLength(manyBlogs.length + 1);
@@ -95,9 +95,24 @@ test("a blog post can be added, without a likes field specified", async () => {
     author: "Jest Test",
     url: "https://example.com/",
   };
-  const response = await api.post("/api/blogs");
-  console.log("response", response.body);
+  const response = await api.post("/api/blogs").send(newPost);
   expect(response.body.likes).toBe(0);
+});
+
+test("a blog post cannot be added without a title field specified", async () => {
+  const newPost = {
+    author: "Jest Test",
+    url: "https://example.com/",
+  };
+  await api.post("/api/blogs").send(newPost).expect(400);
+});
+
+test("a blog post cannot be added without a url field specified", async () => {
+  const newPost = {
+    title: "Test Post",
+    author: "Jest Test",
+  };
+  await api.post("/api/blogs").send(newPost).expect(400);
 });
 
 afterAll(() => {

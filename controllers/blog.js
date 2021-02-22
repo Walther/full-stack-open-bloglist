@@ -14,8 +14,12 @@ blogRouter.post("/", async (request, response, next) => {
     likes: request.body.likes ? request.body.likes : 0, // Default value
   };
   const blog = new Blog(blogObject);
-  const result = await blog.save();
-  response.status(201).json(result);
+  try {
+    const result = await blog.save();
+    response.status(201).json(result);
+  } catch (error) {
+    next(error);
+  }
 });
 
 module.exports = blogRouter;
