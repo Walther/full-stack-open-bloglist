@@ -70,6 +70,9 @@ const manyBlogs = [
   },
 ];
 
+const exampleAuthor = "Edsger W. Dijkstra";
+const exampleAuthor2 = "Robert C. Martin";
+
 // Tests
 
 describe("dummy", () => {
@@ -110,6 +113,64 @@ describe("favorite blog", () => {
   test("when list has many blogs, returns the one with most likes", () => {
     let expected = manyBlogs[2];
     const result = listHelper.favoriteBlog(manyBlogs);
+    expect(result).toEqual(expected);
+  });
+});
+
+describe("getAuthors", () => {
+  test("when list has no blogs, empty array", () => {
+    const result = listHelper.getAuthors(noBlogs);
+    expect(result).toEqual([]);
+  });
+
+  test("when list has only one blog, returns it", () => {
+    const result = listHelper.getAuthors(listWithOneBlog);
+    expect(result).toEqual([listWithOneBlog[0].author]);
+  });
+
+  test("when list has many blogs, returns all authors", () => {
+    let expected = ["Michael Chan", "Edsger W. Dijkstra", "Robert C. Martin"];
+    const result = listHelper.getAuthors(manyBlogs);
+    expect(result).toEqual(expected);
+  });
+});
+
+describe("blogsByAuthor", () => {
+  test("when list has no blogs by the author, author and zero", () => {
+    const result = listHelper.blogsByAuthor(noBlogs, exampleAuthor);
+    const expected = { author: exampleAuthor, blogs: 0 };
+    expect(result).toEqual(expected);
+  });
+
+  test("when list has only one blog by the author, returns one", () => {
+    const result = listHelper.blogsByAuthor(listWithOneBlog, exampleAuthor);
+    const expected = { author: exampleAuthor, blogs: 1 };
+    expect(result).toEqual(expected);
+  });
+
+  test("when list has many blogs, returns all authors", () => {
+    const result = listHelper.blogsByAuthor(manyBlogs, exampleAuthor);
+    const expected = { author: exampleAuthor, blogs: 2 };
+    expect(result).toEqual(expected);
+  });
+});
+
+describe("mostBlogs", () => {
+  test("when list has no blogs, undefined and zero", () => {
+    const result = listHelper.mostBlogs(noBlogs);
+    const expected = { author: undefined, blogs: 0 };
+    expect(result).toEqual(expected);
+  });
+
+  test("when list has only one blog by the author, returns that author and one", () => {
+    const result = listHelper.mostBlogs(listWithOneBlog);
+    const expected = { author: exampleAuthor, blogs: 1 };
+    expect(result).toEqual(expected);
+  });
+
+  test("when list has many blogs, returns expected author and count", () => {
+    const result = listHelper.mostBlogs(manyBlogs);
+    const expected = { author: exampleAuthor2, blogs: 3 };
     expect(result).toEqual(expected);
   });
 });
