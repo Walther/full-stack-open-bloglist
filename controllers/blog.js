@@ -1,22 +1,34 @@
 const blogRouter = require("express").Router();
 const Blog = require("../models/blog");
+const User = require("../models/user");
 
 blogRouter.get("/", async (request, response) => {
-  const blogs = await Blog.find({});
+  const blogs = await Blog.find({}).populate("users");
   response.json(blogs);
 });
 
 blogRouter.post("/", async (request, response, next) => {
+  // const user = await User.findById(body.userId);
+  // TODO: fix initial dirty impl as instructed by the instructions
+  const users = await User.find({});
+  const user = users[0];
+
   const blogObject = {
     title: request.body.title,
     author: request.body.author,
     url: request.body.url,
     likes: request.body.likes ? request.body.likes : 0, // Default value
+    user: user._id,
   };
   const blog = new Blog(blogObject);
   try {
-    const result = await blog.save();
-    response.status(201).json(result);
+    // Save new blog entry
+    const savedBlog = await blog.save();
+    // Save to user's blogs too
+    user.blogs = user.blogs.concat(savedBlog._id);
+    await user.save();
+    // Return
+    response.status(201).json(savedBlog);
   } catch (error) {
     next(error);
   }

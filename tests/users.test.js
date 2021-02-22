@@ -39,6 +39,50 @@ describe("when there is initially one user at db", () => {
     expect(usersAtEnd).toHaveLength(usersAtStart.length);
   });
 
+  test("creation fails with proper statuscode and message if username isn't valid", async () => {
+    const usersAtStart = await helper.usersInDb();
+
+    const newUser = {
+      username: "r",
+      name: "s",
+      password: "sekret",
+    };
+
+    const result = await api
+      .post("/api/users")
+      .send(newUser)
+      .expect(400)
+      .expect("Content-Type", /application\/json/);
+
+    expect(result.body.error).toContain("username");
+    expect(result.body.error).toContain("at least 3 characters");
+
+    const usersAtEnd = await helper.usersInDb();
+    expect(usersAtEnd).toHaveLength(usersAtStart.length);
+  });
+
+  test("creation fails with proper statuscode and message if password isn't valid", async () => {
+    const usersAtStart = await helper.usersInDb();
+
+    const newUser = {
+      username: "root",
+      name: "s",
+      password: "s",
+    };
+
+    const result = await api
+      .post("/api/users")
+      .send(newUser)
+      .expect(400)
+      .expect("Content-Type", /application\/json/);
+
+    expect(result.body.error).toContain("password");
+    expect(result.body.error).toContain("at least 3 characters");
+
+    const usersAtEnd = await helper.usersInDb();
+    expect(usersAtEnd).toHaveLength(usersAtStart.length);
+  });
+
   test("creation succeeds with a fresh username", async () => {
     const usersAtStart = await helper.usersInDb();
 
