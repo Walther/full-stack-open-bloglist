@@ -62,4 +62,5 @@ module.exports = {
   getAuthors,
   blogsByAuthor,
   mostLikes,
+  likesByAuthor,
 };

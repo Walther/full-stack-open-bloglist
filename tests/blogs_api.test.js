@@ -5,6 +5,7 @@ const app = require("../app");
 const api = supertest(app);
 
 const Blog = require("../models/blog");
+const listHelper = require("../utils/list_helper");
 
 const manyBlogs = [
   {
@@ -82,10 +83,21 @@ test("a blog post can be added", async () => {
     url: "https://example.com/",
     likes: 0,
   };
-  let blogObject = new Blog(blog);
-  await blogObject.save();
-  const response = await api.get("/api/blogs");
-  expect(response.body).toHaveLength(manyBlogs.length + 1);
+  const blog = await api.post("/api/blogs");
+  expect(blog.body.id).toBeDefined();
+  const blogs = await api.get("/api/blogs");
+  expect(blogs.body).toHaveLength(manyBlogs.length + 1);
+});
+
+test("a blog post can be added, without a likes field specified", async () => {
+  const newPost = {
+    title: "Test Post",
+    author: "Jest Test",
+    url: "https://example.com/",
+  };
+  const response = await api.post("/api/blogs");
+  console.log("response", response.body);
+  expect(response.body.likes).toBe(0);
 });
 
 afterAll(() => {
