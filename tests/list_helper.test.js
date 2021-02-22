@@ -174,3 +174,23 @@ describe("mostBlogs", () => {
     expect(result).toEqual(expected);
   });
 });
+
+describe("mostLikes", () => {
+  test("when list has no blogs, undefined and zero", () => {
+    const result = listHelper.mostLikes(noBlogs);
+    const expected = { author: undefined, likes: 0 };
+    expect(result).toEqual(expected);
+  });
+
+  test("when list has only one blog by the author, returns that author and its likes", () => {
+    const result = listHelper.mostLikes(listWithOneBlog);
+    const expected = { author: exampleAuthor, likes: 5 };
+    expect(result).toEqual(expected);
+  });
+
+  test("when list has many blogs, returns expected author and count", () => {
+    const result = listHelper.mostLikes(manyBlogs);
+    const expected = { author: exampleAuthor, likes: 17 };
+    expect(result).toEqual(expected);
+  });
+});

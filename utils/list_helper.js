@@ -36,6 +36,24 @@ const mostBlogs = (blogs) => {
   return { author, blogs: count };
 };
 
+const likesByAuthor = (blogs, author) => {
+  const filtered = blogs.filter((blog) => blog.author === author);
+  const likes = filtered.reduce((likes, blog) => likes + blog.likes, 0);
+  return { author, likes };
+};
+
+const mostLikes = (blogs) => {
+  // Yeah, not computationally ideal. I know.
+  // Does the job for the scope of this course exercise though...
+  const authors = getAuthors(blogs);
+  const sorted = authors.sort(
+    (a, b) => likesByAuthor(blogs, b).likes - likesByAuthor(blogs, a).likes
+  );
+  const author = sorted[0];
+  const count = likesByAuthor(blogs, author).likes;
+  return { author, likes: count };
+};
+
 module.exports = {
   dummy,
   totalLikes,
@@ -43,4 +61,5 @@ module.exports = {
   mostBlogs,
   getAuthors,
   blogsByAuthor,
+  mostLikes,
 };
