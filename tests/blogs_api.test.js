@@ -135,6 +135,32 @@ test("a blog post can be deleted", async () => {
   expect(response.status).toBe(204);
 });
 
+test("a blog post can be updated", async () => {
+  // add first, so that we get a known id
+  // yeah yeah, could be cleaner and more isolated as a test...
+  // again, works for the scope of this course exercise.
+  const newPost = {
+    title: "Test Post",
+    author: "Jest Test",
+    url: "https://example.com/",
+    likes: 0,
+  };
+  const blog = await api.post("/api/blogs").send(newPost);
+  const id = blog.body.id;
+  expect(id).toBeDefined();
+
+  const updatedPost = {
+    title: "Test Post",
+    author: "Jest Test",
+    url: "https://example.com/",
+    likes: 1,
+  };
+
+  const response = await api.put(`/api/blogs/${id}`).send(updatedPost);
+  expect(response.status).toBe(200);
+  expect(response.body.likes).toBe(1);
+});
+
 afterAll(() => {
   mongoose.connection.close();
 });
